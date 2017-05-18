@@ -5,7 +5,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 //ALL USERS
 $app = new \Slim\App;
 $app->get('/api/users', function(request $request, response $response){
-	$sql = "SELECT * FROM users";
+	$sql = "SELECT * FROM users ";
 	try{
 		//DB object
 		$db =  new db();
@@ -13,7 +13,7 @@ $app->get('/api/users', function(request $request, response $response){
 		$db = $db->connect();
 		$stmt = $db->query($sql);
 		$users = $stmt->fetchAll(PDO::FETCH_OBJ);
-		$db = null;
+		#$db = null;
 		echo json_encode($users);
 
 	}	catch(PDOException $e){
@@ -22,10 +22,23 @@ $app->get('/api/users', function(request $request, response $response){
 });
 
 //SINGLE USER
-$app = new \Slim\App;
+#$app = new \Slim\App;
 $app->get('/api/user/{id}', function(request $request, response $response){
 	$id = $request->getAttribute('id');
-	$sql = "SELECT * FROM users where id = $id";
+	$sql = "SELECT
+        users.`firstname` as firstname,
+        users.`surname`,
+        users.id
+    FROM
+        friends
+    LEFT JOIN
+        users
+    ON
+        users.`id` = friends.`user_id`
+    AND
+        users.`id` != '" . $id . "'
+    WHERE
+        friends.`friend_id` = '" . $id . "'";
 	try{
 		//DB object
 		$db =  new db();
