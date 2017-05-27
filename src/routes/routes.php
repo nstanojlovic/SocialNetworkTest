@@ -58,28 +58,28 @@ $app->get('/api/user/fofriend/{id}', function(request $request, response $respon
 $app->get('/api/suggested/{id}', function(request $request, response $response){
 		$id = $request->getAttribute('id');
 
-	$sql = "SELECT  distinct
-users.firstname,
-users.surname
-FROM friends f
-JOIN friends f2 ON f.friend_id = f2.user_id
-JOIN friends f3 ON f2.friend_id = f3.user_id
-JOIN users ON f3.friend_id = users.id
-WHERE f3.friend_id NOT IN (
-SELECT friend_id 
-FROM friends 
-WHERE user_id = '" . $id . "'
-UNION
-SELECT friend_id
-from friends
-WHERE user_id = f2.user_id
-)
-AND (
-SELECT COUNT(*)
-from friends 
-where friend_id = f3.friend_id
-)>=2
-AND f.user_id = '" . $id . "'";
+	$sql = " SELECT  distinct
+			users.firstname,
+			users.surname
+			FROM friends f
+			JOIN friends f2 ON f.friend_id = f2.user_id
+			JOIN friends f3 ON f2.friend_id = f3.user_id
+			JOIN users ON f3.friend_id = users.id
+			WHERE f3.friend_id NOT IN (
+			SELECT friend_id 
+			FROM friends 
+			WHERE user_id = '" . $id . "'
+			UNION
+			SELECT friend_id
+			from friends
+			WHERE user_id = f2.user_id
+			)
+			AND (
+			SELECT COUNT(*)
+			from friends 
+			where friend_id = f3.friend_id
+			)>=2
+			AND f.user_id = '" . $id . "'";
 	try{
 		//DB object
 		$db =  new db();
@@ -100,17 +100,17 @@ AND f.user_id = '" . $id . "'";
 $app->get('/api/user/{id}', function(request $request, response $response){
 	$id = $request->getAttribute('id');
 	$sql = "SELECT
-        users.`firstname` as firstname,
-        users.`surname`,
-        users.id
-    FROM
-        friends
-    LEFT JOIN
-        users
-    ON
-        users.`id` = friends.`user_id`
-    WHERE
-        friends.`friend_id` = '" . $id . "'";
+		users.`firstname` as firstname,
+		users.`surname`,
+		users.id
+		FROM
+		friends
+		LEFT JOIN
+		users
+		ON
+		users.`id` = friends.`user_id`
+		WHERE
+		friends.`friend_id` = '" . $id . "'";
 	try{
 		//DB object
 		$db =  new db();
